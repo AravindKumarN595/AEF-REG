@@ -5,15 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AEF PU College Registration</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f8ff; padding: 20px; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    h2 { text-align: center; color: #333; }
-    .test-details { background: #fff8e1; padding: 15px; border-left: 5px solid #f4b400; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
-    input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ccc; border-radius: 6px; }
-    button { width: 100%; background: #007bff; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; }
-    button:hover { background: #0056b3; cursor: pointer; }
-    .qr-container { text-align: center; margin: 20px 0; }
-    .summary { background: #e7f9e9; padding: 20px; border-left: 5px solid #28a745; margin-top: 30px; display: none; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    .test-details {
+      background: #fff8e1;
+      padding: 15px;
+      border-left: 5px solid #f4b400;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+      cursor: pointer;
+    }
+    #thankYou {
+      display: none;
+      margin-top: 30px;
+      background: #e8f5e9;
+      border-left: 5px solid #4caf50;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .qr {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .qr img {
+      width: 200px;
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -34,66 +86,75 @@
     <label>Name:</label>
     <input type="text" name="name" required>
 
-    <label>Phone Number:</label>
+    <label>Phone:</label>
     <input type="tel" name="phone" required>
 
     <label>Course:</label>
-    <input type="text" name="course" required>
+    <select name="course" required>
+      <option value="">Select Course</option>
+      <option value="PU1 PCMB">PU1 PCMB</option>
+      <option value="PU1 PCMC">PU1 PCMC</option>
+    </select>
 
     <label>Slot:</label>
     <select name="slot" required>
+      <option value="">Select Slot</option>
       <option value="10 AM">10 AM</option>
-      <option value="2 PM">2 PM</option>
+      <option value="12 Noon">12 Noon</option>
+      <option value="1 PM">1 PM</option>
     </select>
 
-    <div class="qr-container">
-      <p><strong>Pay ₹200 using UPI</strong></p>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?pa=9110220118@ibl&pn=AEF+PU+College&am=200&cu=INR" alt="Pay via UPI" width="200">
-      <p><strong>UPI ID:</strong> 9110220118@ibl</p>
+    <div class="qr">
+      <p><strong>Pay ₹200 to confirm registration</strong></p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9110220118@ibl&pn=AEF%20PU%20College&am=200&cu=INR" alt="UPI QR Code">
+      <p>UPI ID: <strong>9110220118@ibl</strong></p>
     </div>
 
     <button type="submit">Submit & Confirm</button>
   </form>
 
-  <div class="summary" id="summaryBox">
-    <h3>Registration Successful ✅</h3>
-    <p><strong>Name:</strong> <span id="sumName"></span></p>
-    <p><strong>Phone:</strong> <span id="sumPhone"></span></p>
-    <p><strong>Course:</strong> <span id="sumCourse"></span></p>
-    <p><strong>Slot:</strong> <span id="sumSlot"></span></p>
+  <div id="thankYou">
+    <h3>Thank You for Registering!</h3>
+    <p><strong>Name:</strong> <span id="showName"></span></p>
+    <p><strong>Phone:</strong> <span id="showPhone"></span></p>
+    <p><strong>Course:</strong> <span id="showCourse"></span></p>
+    <p><strong>Slot:</strong> <span id="showSlot"></span></p>
     <p><strong>Payment:</strong> ₹200 Paid</p>
-    <p>📌 Your registration details have been saved.</p>
   </div>
 </div>
 
 <script>
-document.getElementById('registrationForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
+  const scriptURL = "https://script.google.com/macros/s/AKfycby_5Uza5wel2Zfb6fEr1B6rtuC6AE84FIzX0bdRiHyqll-WUK1BNCNdEh688-ovxBfk/exec";
 
-  const formData = new FormData(this);
-  const data = Object.fromEntries(formData.entries());
-  data.payment = "₹200 Paid";
+  document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-  // Show summary
-  document.getElementById('sumName').textContent = data.name;
-  document.getElementById('sumPhone').textContent = data.phone;
-  document.getElementById('sumCourse').textContent = data.course;
-  document.getElementById('sumSlot').textContent = data.slot;
-  document.getElementById('summaryBox').style.display = 'block';
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
-  try {
-    await fetch("https://script.google.com/macros/s/AKfycby2GIZQkcr-2DNJXBx4dB1YZxxputFxD8ppe4UMw4hPrrKNvqUObUcp3WZ6F30FRYRs/exec", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-  } catch (err) {
-    alert("Submission failed. Please try again.");
-    console.error(err);
-  }
-});
+    data.payment = "₹200 Paid";
+
+    try {
+      await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      // Show thank you message
+      document.getElementById('registrationForm').style.display = "none";
+      document.getElementById('thankYou').style.display = "block";
+      document.getElementById('showName').textContent = data.name;
+      document.getElementById('showPhone').textContent = data.phone;
+      document.getElementById('showCourse').textContent = data.course;
+      document.getElementById('showSlot').textContent = data.slot;
+
+    } catch (error) {
+      alert("Something went wrong. Try again.");
+      console.error("Error!", error.message);
+    }
+  });
 </script>
 
 </body>
