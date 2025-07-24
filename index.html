@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AEF PU College Registration</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f8ff; padding: 20px; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #333; }
+    .test-details { background: #fff8e1; padding: 15px; border-left: 5px solid #f4b400; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
+    input, select { width: 100%; padding: 12px; margin: 10px 0 20px; border: 1px solid #ccc; border-radius: 6px; }
+    button { width: 100%; background: #007bff; color: white; border: none; padding: 14px; border-radius: 6px; font-size: 16px; }
+    button:hover { background: #0056b3; cursor: pointer; }
+    .qr-container { text-align: center; margin: 20px 0; }
+    .summary { background: #e7f9e9; padding: 20px; border-left: 5px solid #28a745; margin-top: 30px; display: none; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>AEF INTEGRATED PU COLLEGE</h2>
+
+  <div class="test-details">
+    <strong>Test Details:</strong><br>
+    🏫 Mode: Offline (at Campus)<br>
+    ⏱ Duration: 60 minutes<br>
+    🎓 Eligibility: Class 10 passed or appearing<br>
+    🧪 Applicable for PCMB / PCMC (PU1)<br>
+    🎁 Scholarships valid for 30 days after registration
+  </div>
+
+  <form id="registrationForm">
+    <label>Name:</label>
+    <input type="text" name="name" required>
+
+    <label>Phone Number:</label>
+    <input type="tel" name="phone" required>
+
+    <label>Course:</label>
+    <input type="text" name="course" required>
+
+    <label>Slot:</label>
+    <select name="slot" required>
+      <option value="10 AM">10 AM</option>
+      <option value="2 PM">2 PM</option>
+    </select>
+
+    <div class="qr-container">
+      <p><strong>Pay ₹200 using UPI</strong></p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?pa=9110220118@ibl&pn=AEF+PU+College&am=200&cu=INR" alt="Pay via UPI" width="200">
+      <p><strong>UPI ID:</strong> 9110220118@ibl</p>
+    </div>
+
+    <button type="submit">Submit & Confirm</button>
+  </form>
+
+  <div class="summary" id="summaryBox">
+    <h3>Registration Successful ✅</h3>
+    <p><strong>Name:</strong> <span id="sumName"></span></p>
+    <p><strong>Phone:</strong> <span id="sumPhone"></span></p>
+    <p><strong>Course:</strong> <span id="sumCourse"></span></p>
+    <p><strong>Slot:</strong> <span id="sumSlot"></span></p>
+    <p><strong>Payment:</strong> ₹200 Paid</p>
+    <p>📌 Your registration details have been saved.</p>
+  </div>
+</div>
+
+<script>
+document.getElementById('registrationForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData.entries());
+  data.payment = "₹200 Paid";
+
+  // Show summary
+  document.getElementById('sumName').textContent = data.name;
+  document.getElementById('sumPhone').textContent = data.phone;
+  document.getElementById('sumCourse').textContent = data.course;
+  document.getElementById('sumSlot').textContent = data.slot;
+  document.getElementById('summaryBox').style.display = 'block';
+
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycby2GIZQkcr-2DNJXBx4dB1YZxxputFxD8ppe4UMw4hPrrKNvqUObUcp3WZ6F30FRYRs/exec", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+  } catch (err) {
+    alert("Submission failed. Please try again.");
+    console.error(err);
+  }
+});
+</script>
+
+</body>
+</html>
