@@ -124,37 +124,42 @@
 </div>
 
 <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwglrO5prRxnH9hkRtUswDnFCGUXwVUIkdAGgjel7O5QBgxYhGFhFcRscObN3JNrnXI/exec";
+ function submitForm() {
+  const userName = document.getElementById("name").value;
+  const userPhone = document.getElementById("phone").value;
+  const userCourse = document.getElementById("course").value;
+  const userSlot = document.getElementById("slot").value;
+  const paymentStatus = "Paid ₹200";
 
-  document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
-    data.payment = "₹200 Paid";
-
-    try {
-      await fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      // Show thank you message
-      document.getElementById('registrationForm').style.display = "none";
-      document.getElementById('thankYou').style.display = "block";
-      document.getElementById('showName').textContent = data.name;
-      document.getElementById('showPhone').textContent = data.phone;
-      document.getElementById('showCourse').textContent = data.course;
-      document.getElementById('showSlot').textContent = data.slot;
-
-    } catch (error) {
-      alert("Something went wrong. Try again.");
-      console.error("Error!", error.message);
-    }
+  fetch("https://script.google.com/macros/s/AKfycbwglrO5prRxnH9hkRtUswDnFCGUXwVUIkdAGgjel7O5QBgxYhGFhFcRscObN3JNrnXI/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: userName,
+      phone: userPhone,
+      course: userCourse,
+      slot: userSlot,
+      payment: paymentStatus,
+    }),
+  })
+  .then(response => response.text())
+  .then(data => {
+    console.log("Success:", data);
+    document.getElementById("summary").innerHTML = `
+      <h2>Thank You!</h2>
+      <p><strong>Name:</strong> ${userName}</p>
+      <p><strong>Phone:</strong> ${userPhone}</p>
+      <p><strong>Course:</strong> ${userCourse}</p>
+      <p><strong>Slot:</strong> ${userSlot}</p>
+      <p><strong>Payment:</strong> ${paymentStatus}</p>
+    `;
+  })
+  .catch(error => {
+    console.error("Error!", error.message);
   });
+}
 </script>
 
 </body>
